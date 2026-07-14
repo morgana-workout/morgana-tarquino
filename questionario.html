@@ -151,6 +151,30 @@
     color:#fff;
     border-color:var(--slate-deep);
   }
+  .check-chip{ position:relative; }
+  .check-chip input{
+    position:absolute; opacity:0; width:100%; height:100%; cursor:pointer; margin:0;
+  }
+  .check-chip span{
+    display:inline-block;
+    padding:9px 16px;
+    border:1px solid var(--line);
+    border-radius:100px;
+    font-size:14px;
+    color:var(--slate-deep);
+    background:#FBFCFD;
+  }
+  .check-chip input:checked + span{
+    background:#E7EEF2;
+    color:var(--slate-deep);
+    border-color:var(--slate);
+    font-weight:700;
+  }
+  .conditional{
+    display:none;
+    margin-top:10px;
+  }
+  .conditional.show{ display:block; }
   .submit-btn{
     width:100%;
     margin-top:32px;
@@ -198,9 +222,11 @@
 </head>
 <body>
 <div class="wrap">
+  <div id="introBlock">
   <div class="eyebrow">🔵 Coaching by Morgana</div>
   <h1>Questionario Iniziale</h1>
   <p class="sub">Per costruire il tuo allenamento perfetto ho bisogno di conoscerti meglio. Rispondi con calma, nessuna fretta — più dettagli mi dai, più il programma sarà su misura per te.</p>
+  </div>
 
   <form id="intakeForm">
     <div class="section-label">🔵 Chi sei</div>
@@ -248,6 +274,14 @@
       <label class="radio-chip"><input type="radio" name="esperienza" value="Oltre 5 anni"><span>Oltre 5 anni</span></label>
     </div>
 
+    <label>Come ti definiresti in palestra?</label>
+    <div class="radio-group">
+      <label class="radio-chip"><input type="radio" name="livello" value="Alle prime armi" required><span>Alle prime armi</span></label>
+      <label class="radio-chip"><input type="radio" name="livello" value="So usare i macchinari"><span>So usare i macchinari</span></label>
+      <label class="radio-chip"><input type="radio" name="livello" value="So usare pesi liberi e bilancieri"><span>So usare pesi liberi e bilancieri</span></label>
+      <label class="radio-chip"><input type="radio" name="livello" value="Molto esperta"><span>Molto esperta</span></label>
+    </div>
+
     <label>Quante volte ti alleni a settimana attualmente?</label>
     <div class="radio-group">
       <label class="radio-chip"><input type="radio" name="frequenza" value="0" required><span>0</span></label>
@@ -256,23 +290,82 @@
       <label class="radio-chip"><input type="radio" name="frequenza" value="5+"><span>5+</span></label>
     </div>
 
+    <label>Quanto tempo puoi dedicare agli allenamenti a settimana?</label>
+    <div class="radio-group">
+      <label class="radio-chip"><input type="radio" name="tempo_disponibile" value="2-3 ore" required><span>2–3 ore</span></label>
+      <label class="radio-chip"><input type="radio" name="tempo_disponibile" value="3-5 ore"><span>3–5 ore</span></label>
+      <label class="radio-chip"><input type="radio" name="tempo_disponibile" value="5+ ore"><span>5+ ore</span></label>
+    </div>
+
     <label>Che tipo di attività pratichi ora <span class="opt">(anche più di una)</span></label>
-    <input type="text" name="attivita_attuale" placeholder="Es. sala pesi, corsi di gruppo, corsa, nessuna...">
+    <div class="radio-group">
+      <label class="check-chip"><input type="checkbox" name="attivita_attuale" value="Sala pesi"><span>Sala pesi</span></label>
+      <label class="check-chip"><input type="checkbox" name="attivita_attuale" value="Corsi di gruppo"><span>Corsi di gruppo</span></label>
+      <label class="check-chip"><input type="checkbox" name="attivita_attuale" value="Corsa"><span>Corsa</span></label>
+      <label class="check-chip"><input type="checkbox" name="attivita_attuale" value="Camminata"><span>Camminata</span></label>
+      <label class="check-chip"><input type="checkbox" name="attivita_attuale" value="Nuoto"><span>Nuoto</span></label>
+      <label class="check-chip"><input type="checkbox" name="attivita_attuale" value="Yoga/Pilates"><span>Yoga/Pilates</span></label>
+      <label class="check-chip"><input type="checkbox" name="attivita_attuale" value="Nessuna"><span>Nessuna</span></label>
+    </div>
+
+    <label>Hai già seguito un percorso di personal training o coaching?</label>
+    <div class="radio-group">
+      <label class="radio-chip"><input type="radio" name="coaching_precedente" value="Sì" required><span>Sì</span></label>
+      <label class="radio-chip"><input type="radio" name="coaching_precedente" value="No"><span>No</span></label>
+    </div>
 
     <label>Qual è il tuo obiettivo principale?</label>
-    <textarea name="obiettivo" placeholder="Es. ricomposizione corporea, forza, postura, dimagrimento, tonificazione..." required></textarea>
+    <div class="radio-group">
+      <label class="radio-chip"><input type="radio" name="obiettivo" value="Dimagrimento" required data-toggle="obiettivo_altro_box" data-show="no"><span>Dimagrimento</span></label>
+      <label class="radio-chip"><input type="radio" name="obiettivo" value="Tonificazione" data-toggle="obiettivo_altro_box" data-show="no"><span>Tonificazione</span></label>
+      <label class="radio-chip"><input type="radio" name="obiettivo" value="Aumento massa muscolare" data-toggle="obiettivo_altro_box" data-show="no"><span>Aumento massa muscolare</span></label>
+      <label class="radio-chip"><input type="radio" name="obiettivo" value="Ricomposizione corporea" data-toggle="obiettivo_altro_box" data-show="no"><span>Ricomposizione corporea</span></label>
+      <label class="radio-chip"><input type="radio" name="obiettivo" value="Benessere generale / postura" data-toggle="obiettivo_altro_box" data-show="no"><span>Benessere / postura</span></label>
+      <label class="radio-chip"><input type="radio" name="obiettivo" value="Altro" data-toggle="obiettivo_altro_box" data-show="yes"><span>Altro</span></label>
+    </div>
+    <div class="conditional" id="obiettivo_altro_box">
+      <input type="text" name="obiettivo_altro" placeholder="Dimmi di più sul tuo obiettivo...">
+    </div>
+
+    <label>Come descriveresti la tua alimentazione attuale?</label>
+    <div class="radio-group">
+      <label class="radio-chip"><input type="radio" name="alimentazione" value="Mangio già in modo bilanciato" required><span>Già bilanciata</span></label>
+      <label class="radio-chip"><input type="radio" name="alimentazione" value="Non ho una routine precisa"><span>Nessuna routine precisa</span></label>
+      <label class="radio-chip"><input type="radio" name="alimentazione" value="Sto seguendo una dieta specifica"><span>Sto seguendo una dieta</span></label>
+    </div>
+
+    <label>Hai un evento o una data specifica in mente (gara, vacanza, matrimonio...)?</label>
+    <div class="radio-group">
+      <label class="radio-chip"><input type="radio" name="ha_evento" value="Sì" required data-toggle="evento_box" data-show="yes"><span>Sì</span></label>
+      <label class="radio-chip"><input type="radio" name="ha_evento" value="No" data-toggle="evento_box" data-show="no"><span>No</span></label>
+    </div>
+    <div class="conditional" id="evento_box">
+      <input type="text" name="evento_dettagli" placeholder="Quale evento e per quando?">
+    </div>
 
     <div class="section-label">🔵 Salute e sicurezza</div>
     <p class="section-hint">Informazioni fondamentali per creare un allenamento sicuro.</p>
 
     <label>Hai patologie, infortuni pregressi o interventi chirurgici da segnalarmi?</label>
-    <textarea name="patologie" placeholder="Es. protrusione lombare, intervento alla spalla, pavimento pelvico, gravidanza/post parto..."></textarea>
+    <div class="radio-group">
+      <label class="radio-chip"><input type="radio" name="ha_patologie" value="Sì" required data-toggle="patologie_box" data-show="yes"><span>Sì</span></label>
+      <label class="radio-chip"><input type="radio" name="ha_patologie" value="No" data-toggle="patologie_box" data-show="no"><span>No</span></label>
+    </div>
+    <div class="conditional" id="patologie_box">
+      <textarea name="patologie" placeholder="Es. protrusione lombare, intervento alla spalla, pavimento pelvico, gravidanza/post parto..."></textarea>
+    </div>
 
     <label>Assumi farmaci o integratori che ritieni rilevanti? <span class="opt">(facoltativo)</span></label>
     <input type="text" name="farmaci">
 
     <label>Ci sono zone del corpo o movimenti che ti creano dolore o fastidio?</label>
-    <textarea name="zone_dolore" placeholder="Es. ginocchio destro in affondo, spalla in spinta sopra la testa..."></textarea>
+    <div class="radio-group">
+      <label class="radio-chip"><input type="radio" name="ha_dolori" value="Sì" required data-toggle="dolori_box" data-show="yes"><span>Sì</span></label>
+      <label class="radio-chip"><input type="radio" name="ha_dolori" value="No" data-toggle="dolori_box" data-show="no"><span>No</span></label>
+    </div>
+    <div class="conditional" id="dolori_box">
+      <textarea name="zone_dolore" placeholder="Es. ginocchio destro in affondo, spalla in spinta sopra la testa..."></textarea>
+    </div>
 
     <div class="section-label">🔵 Ultimi dettagli</div>
 
@@ -281,6 +374,15 @@
       <label class="radio-chip"><input type="radio" name="dove" value="Palestra Bulb" required><span>Palestra Bulb</span></label>
       <label class="radio-chip"><input type="radio" name="dove" value="Casa"><span>Casa</span></label>
       <label class="radio-chip"><input type="radio" name="dove" value="Altra palestra"><span>Altra palestra</span></label>
+    </div>
+
+    <label>Se ti alleni anche a casa, che attrezzatura hai? <span class="opt">(anche più di una)</span></label>
+    <div class="radio-group">
+      <label class="check-chip"><input type="checkbox" name="attrezzatura_casa" value="Elastici"><span>Elastici</span></label>
+      <label class="check-chip"><input type="checkbox" name="attrezzatura_casa" value="Manubri/pesetti"><span>Manubri/pesetti</span></label>
+      <label class="check-chip"><input type="checkbox" name="attrezzatura_casa" value="Kettlebell"><span>Kettlebell</span></label>
+      <label class="check-chip"><input type="checkbox" name="attrezzatura_casa" value="Panca"><span>Panca</span></label>
+      <label class="check-chip"><input type="checkbox" name="attrezzatura_casa" value="Nessuna attrezzatura"><span>Nessuna attrezzatura</span></label>
     </div>
 
     <label>Note aggiuntive <span class="opt">(facoltativo)</span></label>
@@ -294,9 +396,23 @@
   <div class="state" id="successState">
     <div class="mark">🔵</div>
     <h2>Grazie!</h2>
-    <p>Ho ricevuto le tue risposte. Ti scriverò a breve per i prossimi passi.</p>
+    <p>Controlla la mail: ti ho inviato il file con le indicazioni per foto e misure. Prepara tutto e ti contatterò nei prossimi giorni per iniziare.</p>
   </div>
 </div>
+
+<script>
+  document.querySelectorAll('input[data-toggle]').forEach(function(input){
+    input.addEventListener('change', function(){
+      var box = document.getElementById(this.dataset.toggle);
+      if (!box) return;
+      if (this.dataset.show === 'yes') {
+        box.classList.add('show');
+      } else {
+        box.classList.remove('show');
+      }
+    });
+  });
+</script>
 
 <script>
   // ⚠️ SETUP RICHIESTO: sostituisci FORM_ENDPOINT con il tuo endpoint Formspree
@@ -331,6 +447,7 @@
 
       if (res.ok) {
         form.style.display = 'none';
+        document.getElementById('introBlock').style.display = 'none';
         document.getElementById('successState').classList.add('active');
       } else {
         throw new Error('Invio non riuscito');
