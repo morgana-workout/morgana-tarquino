@@ -212,6 +212,14 @@
     margin:0 0 8px;
   }
   .state p{ color:#5B6B76; font-size:15px; }
+  .guide-link{
+    display:inline-block;
+    margin-top:6px;
+    color:var(--slate-deep);
+    font-weight:700;
+    font-size:14.5px;
+    text-decoration:underline;
+  }
   .err-text{
     color:var(--error);
     font-size:13px;
@@ -262,6 +270,16 @@
         <input type="number" name="altezza" min="120" max="220">
       </div>
     </div>
+    <div class="row2">
+      <div>
+        <label>Peso (kg)</label>
+        <input type="number" name="peso" min="30" max="200" step="0.1" required>
+      </div>
+      <div>
+        <label>Che lavoro fai?</label>
+        <input type="text" name="lavoro" placeholder="Es. impiegata, commessa, libera professionista...">
+      </div>
+    </div>
 
     <div class="section-label">🔵 Abitudini di allenamento</div>
     <p class="section-hint">Il tuo punto di partenza attuale.</p>
@@ -272,6 +290,13 @@
       <label class="radio-chip"><input type="radio" name="esperienza" value="6 mesi - 2 anni"><span>6 mesi – 2 anni</span></label>
       <label class="radio-chip"><input type="radio" name="esperienza" value="2-5 anni"><span>2–5 anni</span></label>
       <label class="radio-chip"><input type="radio" name="esperienza" value="Oltre 5 anni"><span>Oltre 5 anni</span></label>
+    </div>
+
+    <label>Come descriveresti la tua giornata lavorativa?</label>
+    <div class="radio-group">
+      <label class="radio-chip"><input type="radio" name="sedentarieta" value="Molto sedentaria (seduta gran parte del giorno)" required><span>Molto sedentaria</span></label>
+      <label class="radio-chip"><input type="radio" name="sedentarieta" value="Moderatamente attiva"><span>Moderatamente attiva</span></label>
+      <label class="radio-chip"><input type="radio" name="sedentarieta" value="Molto attiva (in piedi/movimento gran parte del giorno)"><span>Molto attiva</span></label>
     </div>
 
     <label>Come ti definiresti in palestra?</label>
@@ -395,8 +420,10 @@
 
   <div class="state" id="successState">
     <div class="mark">🔵</div>
-    <h2>Grazie!</h2>
-    <p>Controlla la mail: ti ho inviato il file con le indicazioni per foto e misure. Prepara tutto e ti contatterò nei prossimi giorni per iniziare.</p>
+    <h2 id="successTitle">Benvenuta!</h2>
+    <p id="successMsg"></p>
+    <a href="guida-foto-misure.pdf" target="_blank" class="guide-link">📄 Apri la guida foto e misure</a>
+    <a href="#" id="waLink" target="_blank" class="submit-btn" style="display:inline-block; text-decoration:none; margin-top:18px; max-width:280px;">Apri WhatsApp</a>
   </div>
 </div>
 
@@ -446,6 +473,13 @@
       });
 
       if (res.ok) {
+        const nome = (data.get('nome') || '').toString().trim();
+        const saluto = nome ? nome : 'a te';
+        document.getElementById('successTitle').textContent = 'Benvenuta, ' + saluto + '!';
+        document.getElementById('successMsg').textContent =
+          'Benvenuta in La versione migliore di te 🔵 Per costruirti un piano davvero su misura mi mancano solo le tue foto e le tue misure. Qui sotto trovi la guida con tutte le indicazioni — ti consiglio di salvarla o farne uno screenshot, così l\'hai sempre a portata di mano. Quando hai tutto, mandamelo su WhatsApp e iniziamo subito a lavorare sul tuo programma!';
+        const waText = encodeURIComponent('Ciao Morgana, ho completato il questionario! Ecco le mie foto e misure:');
+        document.getElementById('waLink').href = 'https://wa.me/393278343253?text=' + waText;
         form.style.display = 'none';
         document.getElementById('introBlock').style.display = 'none';
         document.getElementById('successState').classList.add('active');
