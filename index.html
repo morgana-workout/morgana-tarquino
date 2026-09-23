@@ -255,6 +255,27 @@ body { padding-bottom:70px; }
 .faq-item summary::after { content:'+'; font-size:1.4rem; font-weight:300; color:var(--slate2); flex:0 0 auto; transition:transform 0.2s ease; }
 .faq-item[open] summary::after { transform:rotate(45deg); }
 .faq-item p { padding:0 0.2rem 1.4rem; color:var(--mid); font-size:0.88rem; line-height:1.75; font-weight:300; max-width:62ch; margin:0; }
+.voucher-overlay { position:fixed; inset:0; background:rgba(26,26,26,0.55); display:none; align-items:center; justify-content:center; z-index:999; padding:1.2rem; }
+.voucher-overlay.show { display:flex; }
+.voucher-card { position:relative; background:var(--white); border-radius:10px; max-width:380px; width:100%; padding:2.4rem 1.8rem 2rem; text-align:center; box-shadow:0 20px 60px rgba(26,26,26,0.3); }
+.voucher-close { position:absolute; top:0.8rem; right:0.9rem; background:none; border:none; font-size:1.3rem; color:var(--mid); cursor:pointer; line-height:1; padding:0.3rem; }
+.voucher-badge { font-size:0.68rem; font-weight:800; letter-spacing:0.14em; text-transform:uppercase; color:var(--slate2); margin-bottom:0.6rem; }
+.voucher-amount { font-family:'Anton',sans-serif; font-size:3rem; color:var(--ink); line-height:1; margin-bottom:0.3rem; }
+.voucher-sub { font-size:0.85rem; color:var(--mid); font-weight:300; margin-bottom:1.4rem; }
+.voucher-coupon { border:2px dashed var(--slate); border-radius:8px; padding:0.9rem 1rem; margin-bottom:1.2rem; position:relative; }
+.voucher-coupon::before, .voucher-coupon::after { content:''; position:absolute; width:16px; height:16px; background:var(--white); border-radius:50%; top:50%; transform:translateY(-50%); }
+.voucher-coupon::before { left:-9px; }
+.voucher-coupon::after { right:-9px; }
+.voucher-code { font-family:'Anton',sans-serif; font-size:1.5rem; letter-spacing:0.08em; color:var(--slate2); }
+.voucher-note { font-size:0.78rem; color:var(--mid); font-weight:300; line-height:1.7; margin-bottom:1.4rem; }
+.voucher-actions { display:flex; flex-direction:column; gap:0.6rem; }
+.voucher-btn { display:inline-flex; align-items:center; justify-content:center; gap:0.5rem; width:100%; padding:0.9rem 1rem; border-radius:3px; font-size:0.8rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; text-decoration:none; cursor:pointer; border:none; transition:transform 0.15s, background 0.2s; font-family:'DM Sans',sans-serif; }
+.voucher-btn.primary { background:#e8c574; color:var(--ink); }
+.voucher-btn.secondary { background:var(--off); color:var(--ink); border:1px solid var(--border); }
+.voucher-btn:hover { transform:translateY(-1px); }
+.voucher-copied { font-size:0.75rem; color:var(--slate2); margin-top:0.5rem; display:none; font-weight:600; }
+.voucher-copied.show { display:block; }
+
 
 .contact-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-top:3.5rem; }
 .contact-card { background:var(--white); border:1px solid var(--border); border-radius:4px; padding:2.5rem 2rem; text-align:center; text-decoration:none; color:var(--ink); display:block; transition:transform 0.25s, box-shadow 0.25s; position:relative; overflow:hidden; }
@@ -569,8 +590,41 @@ async function unlockPrices(){
 
   document.getElementById('priceGate').style.display = 'none';
   document.getElementById('priceReveal').style.display = 'block';
+  document.getElementById('voucherOverlay').classList.add('show');
+}
+
+function closeVoucher(){
+  document.getElementById('voucherOverlay').classList.remove('show');
+}
+
+function copyVoucherCode(){
+  const code = document.getElementById('voucherCode').textContent.trim();
+  const done = document.getElementById('voucherCopied');
+  const show = () => { done.classList.add('show'); setTimeout(()=>done.classList.remove('show'), 2500); };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(code).then(show).catch(show);
+  } else {
+    show();
+  }
 }
 </script>
+<div class="voucher-overlay" id="voucherOverlay">
+  <div class="voucher-card">
+    <button class="voucher-close" onclick="closeVoucher()" aria-label="Chiudi">✕</button>
+    <div class="voucher-badge">Buono sconto sbloccato</div>
+    <div class="voucher-amount">-10€</div>
+    <p class="voucher-sub">Sul tuo primo mese di coaching</p>
+    <div class="voucher-coupon">
+      <div class="voucher-code" id="voucherCode">INSTAGRAM10</div>
+    </div>
+    <p class="voucher-note">Fai uno screenshot di questo buono oppure copia il codice, e mandamelo in chat su WhatsApp quando mi scrivi: te lo confermo subito ✨</p>
+    <div class="voucher-actions">
+      <button class="voucher-btn secondary" onclick="copyVoucherCode()" type="button">📋 Copia il codice</button>
+      <a class="voucher-btn primary" href="https://wa.me/393278343253?text=Ciao%20Morgana!%20Ho%20il%20codice%20INSTAGRAM10%20per%20il%20mio%20sconto%20di%20benvenuto%2C%20voglio%20iniziare!" target="_blank">💬 Scrivimi su WhatsApp</a>
+    </div>
+    <p class="voucher-copied" id="voucherCopied">Codice copiato ✓</p>
+  </div>
+</div>
 <div class="sticky-cta-bar">
   <a href="#programma" class="btn-main">Inizia il percorso →</a>
   <a href="https://wa.me/393278343253?text=Ciao%20Morgana!%20Vorrei%20avere%20maggiori%20informazioni." class="btn-wa" target="_blank" aria-label="Scrivimi su WhatsApp">💬</a>
