@@ -87,6 +87,10 @@ textarea { resize:vertical; min-height:70px; font-family:'DM Sans',sans-serif; }
 
 .alt-wa { display:block; text-align:center; margin-top:1rem; font-size:0.82rem; color:var(--slate); text-decoration:none; font-weight:600; }
 
+.price-box-gift { text-align:center; background:linear-gradient(135deg, var(--ink) 0%, var(--slate2) 100%); color:#fff; border-radius:10px; padding:1.4rem 1rem; margin:1.8rem 0 0.4rem; }
+.pr-label { font-size:0.68rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--acc); margin-bottom:0.4rem; font-weight:700; }
+.pr-value { font-family:'Anton',sans-serif; font-size:2.2rem; color:var(--gold); line-height:1; }
+
 .success { display:none; text-align:center; padding:3rem 1rem; }
 .success .ic { font-size:2.6rem; margin-bottom:1rem; }
 .success h2 { font-family:'Anton',sans-serif; text-transform:uppercase; font-size:1.6rem; color:var(--ink); margin:0 0 0.8rem; }
@@ -160,20 +164,32 @@ textarea { resize:vertical; min-height:70px; font-family:'DM Sans',sans-serif; }
     </div>
 
     <div class="form-block" id="formBlock" style="display:none;">
-      <div class="lock-note"><span class="ic">🔒</span><span>Il prezzo di questo pacchetto è riservato: lascia i tuoi dati per sbloccarlo e inviare la richiesta.</span></div>
+      <div class="lock-note"><span class="ic">🔒</span><span>Il prezzo di questo pacchetto è riservato: lascia i tuoi dati per sbloccarlo.</span></div>
       <div class="form-label">I tuoi dati (chi regala)</div>
       <input type="text" id="gNome" placeholder="Nome e cognome" required>
       <input type="email" id="gEmail" placeholder="Email" required>
       <input type="tel" id="gTelefono" placeholder="Telefono" required>
 
-      <div class="form-label">Per chi è il regalo (facoltativo)</div>
-      <input type="text" id="gDestinatario" placeholder="Nome della persona che riceve il regalo">
-      <textarea id="gMessaggio" placeholder="Un messaggio personale da inserire nella gift card (facoltativo)"></textarea>
-      <p class="field-note">Ti contatto io per confermare i dettagli, il pagamento e mandarti la gift card pronta da regalare, in formato digitale o da stampare.</p>
-
       <div class="gate-err" id="gErr">Compila nome, email e telefono per continuare.</div>
 
-      <button class="btn-submit" id="gBtn" onclick="submitGift()">Richiedi questa gift card</button>
+      <button class="btn-submit" id="gBtn" onclick="revealPrice()">Scopri il prezzo</button>
+    </div>
+
+    <div class="form-block" id="giftDetailsBlock" style="display:none;">
+      <div class="price-box-gift">
+        <div class="pr-label" id="prLabel">—</div>
+        <div class="pr-value" id="prValue">—</div>
+      </div>
+
+      <div class="form-label">Per la gift card</div>
+      <input type="text" id="gDa" placeholder="Da: (es. il tuo nome, o \"i tuoi colleghi\")" required>
+      <input type="text" id="gPer" placeholder="Per: nome di chi riceve il regalo" required>
+      <textarea id="gMessaggio" placeholder="Messaggio personale da inserire nella gift card (facoltativo)"></textarea>
+      <p class="field-note">Ti scrivo io per confermare il pagamento e mandarti via email la gift card pronta, compilata con questi dati.</p>
+
+      <div class="gate-err" id="gErr2">Compila i campi "Da" e "Per" per continuare.</div>
+
+      <button class="btn-submit" id="gBtn2" onclick="submitGift()">Richiedi questa gift card</button>
       <a class="alt-wa" href="https://wa.me/393278343253?text=Ciao%20Morgana!%20Vorrei%20regalare%20una%20gift%20card%20per%20il%20coaching." target="_blank">oppure scrivimi direttamente su WhatsApp →</a>
     </div>
   </div>
@@ -214,6 +230,7 @@ function switchTab(tab){
   document.querySelectorAll('.pkg-opt').forEach(el => el.classList.remove('sel'));
   document.getElementById('cardPreview').style.display = 'none';
   document.getElementById('formBlock').style.display = 'none';
+  document.getElementById('giftDetailsBlock').style.display = 'none';
 }
 
 function selectPkg(el){
@@ -221,8 +238,31 @@ function selectPkg(el){
   el.classList.add('sel');
   selected = { price: el.dataset.price, name: el.dataset.name, sub: el.dataset.sub };
 
+  document.getElementById('giftDetailsBlock').style.display = 'none';
   document.getElementById('formBlock').style.display = 'block';
   document.getElementById('formBlock').scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+function revealPrice(){
+  if (!selected) return;
+  const nome = document.getElementById('gNome').value.trim();
+  const email = document.getElementById('gEmail').value.trim();
+  const telefono = document.getElementById('gTelefono').value.trim();
+  const errEl = document.getElementById('gErr');
+
+  if (!nome || !email || !telefono) {
+    errEl.style.display = 'block';
+    return;
+  }
+  errEl.style.display = 'none';
+
+  const label = selected.name.split('—')[1] ? selected.name.split('—')[1].trim() : selected.name;
+  document.getElementById('prLabel').textContent = label;
+  document.getElementById('prValue').textContent = selected.price + '€';
+
+  document.getElementById('gDa').value = document.getElementById('gDa').value || nome;
+  document.getElementById('giftDetailsBlock').style.display = 'block';
+  document.getElementById('giftDetailsBlock').scrollIntoView({ behavior:'smooth', block:'start' });
 }
 
 async function submitGift(){
@@ -230,12 +270,13 @@ async function submitGift(){
   const nome = document.getElementById('gNome').value.trim();
   const email = document.getElementById('gEmail').value.trim();
   const telefono = document.getElementById('gTelefono').value.trim();
-  const destinatario = document.getElementById('gDestinatario').value.trim();
+  const da = document.getElementById('gDa').value.trim();
+  const per = document.getElementById('gPer').value.trim();
   const messaggio = document.getElementById('gMessaggio').value.trim();
-  const errEl = document.getElementById('gErr');
-  const btn = document.getElementById('gBtn');
+  const errEl = document.getElementById('gErr2');
+  const btn = document.getElementById('gBtn2');
 
-  if (!nome || !email || !telefono) {
+  if (!da || !per) {
     errEl.style.display = 'block';
     return;
   }
@@ -252,7 +293,8 @@ async function submitGift(){
     payload.append('nome_acquirente', nome);
     payload.append('email', email);
     payload.append('telefono', telefono);
-    payload.append('destinatario', destinatario || '(non indicato)');
+    payload.append('da', da);
+    payload.append('per', per);
     payload.append('messaggio', messaggio || '(nessuno)');
     await fetch(GIFT_ENDPOINT, { method:'POST', body: payload, headers: { 'Accept':'application/json' } });
   } catch (e) {
@@ -260,7 +302,7 @@ async function submitGift(){
   }
 
   document.getElementById('cpName').textContent = selected.name.split('—')[1] ? selected.name.split('—')[1].trim() : selected.name;
-  document.getElementById('cpSub').textContent = selected.sub;
+  document.getElementById('cpSub').textContent = 'Da: ' + da + '  ·  Per: ' + per;
   document.getElementById('cpPrice').textContent = selected.price + '€';
 
   document.getElementById('giftFlow').style.display = 'none';
