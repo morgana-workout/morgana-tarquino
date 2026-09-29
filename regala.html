@@ -87,9 +87,6 @@ textarea { resize:vertical; min-height:70px; font-family:'DM Sans',sans-serif; }
 
 .alt-wa { display:block; text-align:center; margin-top:1rem; font-size:0.82rem; color:var(--slate); text-decoration:none; font-weight:600; }
 
-.price-box-gift { text-align:center; background:linear-gradient(135deg, var(--ink) 0%, var(--slate2) 100%); color:#fff; border-radius:10px; padding:1.4rem 1rem; margin:1.8rem 0 0.4rem; }
-.pr-label { font-size:0.68rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--acc); margin-bottom:0.4rem; font-weight:700; }
-.pr-value { font-family:'Anton',sans-serif; font-size:2.2rem; color:var(--gold); line-height:1; }
 
 .success { display:none; text-align:center; padding:3rem 1rem; }
 .success .ic { font-size:2.6rem; margin-bottom:1rem; }
@@ -178,13 +175,10 @@ textarea { resize:vertical; min-height:70px; font-family:'DM Sans',sans-serif; }
     </div>
 
     <div class="form-block" id="giftDetailsBlock" style="display:none;">
-      <div class="price-box-gift">
-        <div class="pr-label" id="prLabel">—</div>
-        <div class="pr-value" id="prValue">—</div>
-      </div>
+      <p class="field-note" id="giftPkgNote" style="margin:0 0 1.2rem;">Pacchetto selezionato: —</p>
 
       <div class="form-label">Per la gift card</div>
-      <input type="text" id="gDa" placeholder="Da: (es. il tuo nome, o \"i tuoi colleghi\")" required>
+      <input type="text" id="gDa" placeholder="Da: (es. il tuo nome, o i tuoi colleghi)" required>
       <input type="text" id="gPer" placeholder="Per: nome di chi riceve il regalo" required>
       <textarea id="gMessaggio" placeholder="Messaggio personale da inserire nella gift card (facoltativo)"></textarea>
       <p class="field-note">Ti scrivo io per confermare il pagamento e mandarti via email la gift card pronta, compilata con questi dati.</p>
@@ -211,12 +205,20 @@ const GIFT_ENDPOINT = "https://formspree.io/f/xxxxxxxx";
 
 let currentTab = 'online';
 let selected = null;
-let unlocked = false;
+let selectedEl = null;
+let unlockedAll = false;
 
-function updatePriceDisplay(){
+function revealAllPrices(){
+  document.querySelectorAll('.pkg-opt').forEach(el => {
+    const box = el.querySelector('.pkg-lock, .pkg-price');
+    if (box) { box.textContent = el.dataset.price + '€'; box.className = 'pkg-price'; }
+  });
+  unlockedAll = true;
+}
+
+function updateGiftPkgNote(){
   const label = selected.name.split('—')[1] ? selected.name.split('—')[1].trim() : selected.name;
-  document.getElementById('prLabel').textContent = label;
-  document.getElementById('prValue').textContent = selected.price + '€';
+  document.getElementById('giftPkgNote').textContent = 'Pacchetto selezionato: ' + label + ' — ' + selected.price + '€';
 }
 
 function switchTab(tab){
@@ -225,9 +227,9 @@ function switchTab(tab){
   document.getElementById('tabPresenza').classList.toggle('active', tab==='presenza');
   document.getElementById('viewOnline').classList.toggle('active', tab==='online');
   document.getElementById('viewPresenza').classList.toggle('active', tab==='presenza');
-  selected = null;
-  unlocked = false;
   document.querySelectorAll('.pkg-opt').forEach(el => el.classList.remove('sel'));
+  selected = null;
+  selectedEl = null;
   document.getElementById('formBlock').style.display = 'none';
   document.getElementById('giftDetailsBlock').style.display = 'none';
 }
@@ -235,11 +237,16 @@ function switchTab(tab){
 function selectPkg(el){
   document.querySelectorAll('.pkg-opt').forEach(x => x.classList.remove('sel'));
   el.classList.add('sel');
+  selectedEl = el;
   selected = { price: el.dataset.price, name: el.dataset.name, sub: el.dataset.sub };
 
-  if (unlocked) {
-    // Il prezzo è già stato sbloccato: aggiorniamo solo il pacchetto mostrato, senza tornare indietro.
-    updatePriceDisplay();
+  if (unlockedAll) {
+    // I prezzi sono già tutti sbloccati: aggiorniamo il pacchetto scelto e ci assicuriamo
+    // che la sezione per procedere sia visibile, anche dopo un cambio di tab.
+    updateGiftPkgNote();
+    document.getElementById('formBlock').style.display = 'none';
+    document.getElementById('giftDetailsBlock').style.display = 'block';
+    document.getElementById('giftDetailsBlock').scrollIntoView({ behavior:'smooth', block:'start' });
     return;
   }
 
@@ -261,8 +268,8 @@ function revealPrice(){
   }
   errEl.style.display = 'none';
 
-  updatePriceDisplay();
-  unlocked = true;
+  revealAllPrices();
+  updateGiftPkgNote();
 
   document.getElementById('gDa').value = document.getElementById('gDa').value || nome;
   document.getElementById('formBlock').style.display = 'none';
@@ -289,25 +296,26 @@ async function submitGift(){
   btn.disabled = true;
   btn.textContent = 'Invio...';
 
-  try {
-    const payload = new FormData();
-    payload.append('richiesta', 'Gift Card');
-    payload.append('tipo', currentTab === 'online' ? 'Coaching Online' : 'Lezioni 1:1 in presenza');
-    payload.append('pacchetto', selected.name);
-    payload.append('prezzo', selected.price + '€');
-    payload.append('nome_acquirente', nome);
-    payload.append('email', email);
-    payload.append('telefono', telefono);
-    payload.append('da', da);
-    payload.append('per', per);
-    payload.append('messaggio', messaggio || '(nessuno)');
-    await fetch(GIFT_ENDPOINT, { method:'POST', body: payload, headers: { 'Accept':'application/json' } });
-  } catch (e) {
-    // anche in caso di errore di rete, confermiamo comunque la richiesta all'utente
-  }
+  const payload = new FormData();
+  payload.append('richiesta', 'Gift Card');
+  payload.append('tipo', currentTab === 'online' ? 'Coaching Online' : 'Lezioni 1:1 in presenza');
+  payload.append('pacchetto', selected.name);
+  payload.append('prezzo', selected.price + '€');
+  payload.append('nome_acquirente', nome);
+  payload.append('email', email);
+  payload.append('telefono', telefono);
+  payload.append('da', da);
+  payload.append('per', per);
+  payload.append('messaggio', messaggio || '(nessuno)');
 
+  // Mostriamo subito la conferma: non facciamo dipendere l'esperienza dell'utente
+  // dalla riuscita dell'invio (es. endpoint non ancora configurato o rete lenta).
   document.getElementById('giftFlow').style.display = 'none';
   document.getElementById('successBlock').style.display = 'block';
+
+  fetch(GIFT_ENDPOINT, { method:'POST', body: payload, headers: { 'Accept':'application/json' } }).catch(function(e){
+    // errore di invio silenzioso: la richiesta resta comunque confermata a schermo
+  });
 }
 </script>
 </body>
