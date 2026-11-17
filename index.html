@@ -704,5 +704,16 @@ function copyVoucherCode(){
   });
 })();
 </script>
+<script>
+(function(){try{
+  if(/[?&]prezzi(=1)?(&|$)/.test(location.search)){
+    var g=document.getElementById('priceGate'),r=document.getElementById('priceReveal'),o=document.getElementById('voucherOverlay');
+    if(g)g.style.display='none';
+    if(r)r.style.display='block';
+    if(o)o.classList.remove('show');
+  }
+}catch(e){}
+})();
+</script>
 </body>
 </html>
