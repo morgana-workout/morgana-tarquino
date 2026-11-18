@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Candidati al Coaching · Coaching by Morgana</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1f3552;
+    --slate:#4c8cd0;
+    --slate-deep:#24446c;
+    --slate-soft:#4c8cd0;
+    --bg:#fcfbf2;
+    --card:#FFFFFF;
+    --line:#dbe6f2;
+    --azzurro:#e4effb;
+    --crema:#f8e8b8;
+    --crema-soft:#fffaea;
+    --mid:#5b6f88;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    min-height:100vh;
+    background:var(--bg);
+    font-family:'DM Sans', sans-serif;
+    color:var(--ink);
+    padding:32px 16px 60px;
+  }
+  .wrap{ max-width:600px; margin:0 auto; }
+  .eyebrow{
+    font-size:13px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--slate-soft); font-weight:700; margin-bottom:8px; text-align:center;
+  }
+  h1{
+    font-family:'Anton', sans-serif; font-weight:400; letter-spacing:.01em;
+    font-size:clamp(26px,6vw,34px); color:var(--slate-deep); margin:0 0 6px;
+    line-height:1.1; text-align:center;
+  }
+  .sub{ color:var(--mid); font-size:14.5px; margin:0 0 18px; text-align:center; }
+
+  .promo-hero{
+    display:none; background:linear-gradient(180deg,var(--azzurro) 0%,var(--crema-soft) 100%); color:var(--slate-deep); border:1px solid #cfe0f6; border-radius:18px; text-align:center;
+    padding:18px 18px 16px; margin:0 auto 22px; max-width:480px;
+  }
+  .promo-hero.show{ display:block; }
+  .promo-hero .ph-top{ font-size:12.5px; letter-spacing:.12em; text-transform:uppercase; font-weight:700; color:var(--slate); }
+  .promo-hero .ph-big{ font-family:'Anton',sans-serif; font-weight:400; font-size:clamp(38px,11vw,52px); line-height:1.05; color:var(--slate-deep); margin:6px 0 4px; letter-spacing:.01em; }
+  .promo-hero .ph-sub{ font-size:14px; line-height:1.45; color:var(--mid); font-weight:500; }
+
+  .progress-track{ height:5px; background:var(--line); border-radius:100px; overflow:hidden; margin-bottom:28px; }
+  .progress-fill{ height:100%; background:var(--slate-deep); border-radius:100px; width:0%; transition:width .3s ease; }
+
+  .card{
+    background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:32px clamp(20px,5vw,36px); min-height:260px; display:flex; flex-direction:column;
+  }
+  .card.intro{ min-height:0; padding:22px clamp(20px,5vw,36px) 22px; }
+  .card.intro .nav-row{ padding-top:14px; }
+  .card.intro .step-sub{ margin-bottom:0; }
+  .step-title{
+    font-family:'Anton', sans-serif; font-weight:400; font-size:clamp(20px,5vw,24px);
+    color:var(--slate-deep); margin:0 0 4px; line-height:1.25;
+  }
+  .step-sub{ font-family:'DM Sans',sans-serif; font-size:13px; font-weight:400; color:var(--mid); margin:0 0 16px; }
+  label{ display:block; font-size:14px; font-weight:700; color:var(--ink); margin:16px 0 6px; }
+  label:first-of-type{ margin-top:0; }
+  label .opt{ font-weight:400; color:var(--mid); }
+  input[type=text], input[type=email], input[type=tel], input[type=number], input[type=date], textarea{
+    width:100%; font-family:'DM Sans', sans-serif; font-size:15px; padding:11px 13px;
+    border:1px solid var(--line); border-radius:8px; background:#fcfdff; color:var(--ink);
+  }
+  textarea{ resize:vertical; min-height:80px; }
+  textarea.grande{ min-height:150px; }
+  input:focus, textarea:focus{ outline:none; border-color:var(--slate); box-shadow:0 0 0 3px rgba(76,140,208,0.18); }
+
+  input[type=date]{ -webkit-appearance:none; appearance:none; height:46px; padding:0 13px; line-height:46px; }
+  .radio-group{ display:flex; flex-direction:column; gap:8px; margin-top:6px; }
+    .radio-chip, .check-chip{ position:relative; display:flex; width:100%; margin:0; }
+  .radio-chip input, .check-chip input{ position:absolute; opacity:0; width:100%; height:100%; cursor:pointer; margin:0; }
+.radio-chip span, .check-chip span{
+    display:flex; align-items:center; text-align:left;
+    padding:12px 16px; border:1px solid var(--line); border-radius:10px;
+    font-size:14.5px; color:var(--slate-deep); background:#fcfdff; line-height:1.35; width:100%;
+}
+.radio-chip input:checked + span{ background:var(--slate-deep); color:#fff; border-color:var(--slate-deep); }
+  .check-chip input:checked + span{ background:var(--azzurro); color:var(--slate-deep); border-color:var(--slate); font-weight:700; }
+
+  .checklist{ display:flex; flex-direction:column; gap:8px; margin-top:6px; }
+    .list-check{ position:relative; display:flex; align-items:flex-start; gap:10px; padding:12px 14px; margin:0;
+    border:1px solid var(--line); border-radius:10px; background:#fcfdff; cursor:pointer; }
+  .list-check input{ position:relative; width:18px; height:18px; flex:0 0 18px; margin-top:1px; accent-color:var(--slate-deep); cursor:pointer; }
+  .list-check span{ font-size:14.5px; color:var(--ink); line-height:1.35; font-weight:400; }
+  .list-check.checked{ background:var(--azzurro); border-color:var(--slate); }
+  .list-check.checked span{ color:var(--slate-deep); font-weight:700; }
+  .consent-box{ margin-top:22px; }
+  .consent-box .list-check span{ font-size:13.5px; }
+
+  .conditional{ display:none; margin-top:10px; }
+  .conditional.show{ display:block; }
+
+  .nav-row{ display:flex; gap:10px; margin-top:auto; padding-top:28px; }
+  .btn-back{
+    flex:0 0 auto; background:none; border:1px solid var(--line); color:var(--mid);
+    border-radius:8px; padding:0 18px; font-size:14px; font-weight:700; cursor:pointer;
+  }
+  .btn-next{
+    flex:1; background:var(--slate-deep); color:#fff; border:none; border-radius:8px;
+    padding:15px; font-family:'DM Sans', sans-serif; font-size:15.5px; font-weight:700; cursor:pointer;
+  }
+  .btn-next:hover{ background:var(--slate); }
+  .btn-next:disabled{ opacity:.6; }
+  .err-text{ color:var(--slate-deep); background:var(--crema-soft); border:1px solid var(--crema); border-radius:8px; padding:9px 12px; font-size:13px; font-weight:700; margin-top:12px; display:none; }
+
+  .state{ display:none; text-align:center; padding:50px 20px; }
+  .state.active{ display:block; }
+  .state .mark{ font-size:30px; margin-bottom:10px; }
+  .state h2{ font-family:'Anton', sans-serif; font-weight:400; font-size:24px; color:var(--slate-deep); margin:0 0 8px; }
+  .state p{ color:var(--mid); font-size:15px; line-height:1.5; }
+  .state .promo-conf{ background:var(--crema-soft); border:2px solid var(--crema); color:var(--slate-deep); border-radius:18px; padding:18px 18px 16px; margin:18px auto 0; max-width:460px; font-weight:500; }
+  .state .promo-conf .pc-big{ font-family:'Anton',sans-serif; font-weight:400; font-size:34px; line-height:1.1; color:var(--slate-deep); display:block; margin-bottom:2px; }
+  .state .promo-conf .pc-small{ display:block; font-size:12.5px; letter-spacing:.1em; text-transform:uppercase; font-weight:700; color:var(--slate); margin-bottom:10px; }
+  .state .promo-conf .pc-txt{ display:block; text-align:center; font-size:15px; line-height:1.5; }
+  .submit-btn{
+    display:inline-block; text-decoration:none; margin-top:18px; max-width:280px;
+    background:var(--slate-deep); color:#fff; border:none; border-radius:8px; padding:15px 24px;
+    font-family:'DM Sans', sans-serif; font-size:15.5px; font-weight:700;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div id="introBlock">
+    <div class="eyebrow">✨ Coaching by Morgana</div>
+    <h1 id="mainTitle">Candidati al Coaching</h1>
+    <p class="sub">Rispondi con calma, una domanda alla volta. Mi serve per capire come posso aiutarti al meglio.</p>
+    <div class="promo-hero" id="promoPill">
+      <div class="ph-top">✨ Lista d'attesa di gennaio</div>
+      <div class="ph-big">1 MESE GRATIS</div>
+      <div class="ph-sub">Candidandoti entro il 31 dicembre 2026 entri in lista d'attesa: posto riservato per gennaio, mese extra gratuito su qualsiasi pacchetto e non paghi nulla adesso 🫶🏻</div>
+    </div>
+  </div>
+
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+
+  <div class="card" id="stepCard"></div>
+
+  <div class="state" id="successState">
+    <div class="mark">✨</div>
+    <h2 id="successTitle">Grazie!</h2>
+    <p id="successMsg"></p>
+    <div class="promo-conf" id="successPromo" style="display:none"><span class="pc-small">✨ Sei in lista d'attesa</span><span class="pc-big">1 MESE GRATIS</span><span class="pc-txt" id="successPromoTxt"></span></div>
+    <a href="https://calendly.com/morgana-workout/30min" target="_blank" class="submit-btn">Prenota una chiamata conoscitiva</a>
+  </div>
+</div>
+
+<script>
+  const SUPABASE_URL = "https://scupbncjaxqkoaiavrci.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNjdXBibmNqYXhxa29haWF2cmNpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgxOTc4MTUsImV4cCI6MjEwMzc3MzgxNX0.D815GNFjL38w4kZ9zNZnmAooYkNpOWbisJ49mmGgaQI";
+
+  // Promo "lista d'attesa = candidatura": attiva fino al 31/12/2026 (ora italiana).
+  // Il controllo usa la data del momento, quindi si spegne da sola dal 1 gennaio 2027.
+  const PROMO_FINE = "2026-12-31";
+  const TESTO_PROMO = "Hai ottenuto il tuo mese extra gratuito su qualsiasi pacchetto, con partenza a gennaio ✨ Il tuo posto è riservato e non paghi nulla adesso. Ti contatto io su WhatsApp 🫶🏻";
+  function oggiItalia(){
+    try { return new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Rome' }); }
+    catch (e) { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+  }
+  function promoAttiva(){ return oggiItalia() <= PROMO_FINE; }
+
+  const CONDIZIONI_SALUTE = [
+    { value: "ipertensione", label: "Ipertensione" },
+    { value: "pavimento_pelvico", label: "Pavimento pelvico" },
+    { value: "ginocchia", label: "Ginocchia doloranti / scarsa mobilità" },
+    { value: "lombare", label: "Zona lombare / iperlordosi" },
+    { value: "spalle", label: "Spalle / cifosi / anteposizione" },
+    { value: "anche", label: "Anche bloccate / dolorose" },
+    { value: "caviglie", label: "Caviglia rigida / scarsa mobilità" },
+    { value: "valgismo", label: "Valgismo ginocchia" },
+  ];
+
+  const steps = [
+    { title: "Come vuoi allenarti?", fields: [
+      { type: 'chip', name: 'tipo_servizio', required: true, options: [
+        { label: 'Online', value: 'online' },
+                  { label: 'In presenza su Torino (Bulb)', value: 'presenza' },
+        { label: 'Ibrido', value: 'ibrido' },
+      ]},
+    ]},
+    { title: "Dove ti alleneresti?", fields: [
+      { type: 'chip', name: 'sede_abituale', required: true, options: [
+        { label: 'Via San Secondo 39, Torino', value: 'Via San Secondo 39, Torino' },
+        { label: 'Via Fratelli Calandra 6, Torino', value: 'Via Fratelli Calandra 6, Torino' },
+      ], conditionalOn: { name: 'tipo_servizio', notValue: 'online' } },
+    ]},
+    { title: "Qualche dato su di te", fields: [
+      { type: 'date', name: 'data_nascita', label: 'Data di nascita', required: true },
+      { type: 'chip', name: 'sesso', required: true, options: [
+        { label: 'Donna', value: 'F' }, { label: 'Uomo', value: 'M' },
+      ]},
+      { type: 'number', name: 'altezza_cm', label: 'Altezza (cm)', min: 120, max: 220, required: true },
+      { type: 'number', name: 'peso_kg', label: 'Peso (kg)', min: 30, max: 200, step: 0.1, required: true },
+      { type: 'text', name: 'citta', label: 'Città', required: true },
+    ]},
+    { title: "Che lavoro fai?", subtitle: "E quanto ti muovi durante la giornata", fields: [
+      { type: 'text', name: 'tipo_lavoro', label: 'Lavoro', placeholder: 'es. impiegata in ufficio', required: true },
+      { type: 'chip', name: 'livello_attivita', required: true, options: [
+        { label: 'Sedentaria', value: 'sedentario' },
+        { label: 'Moderatamente attiva', value: 'intermedio' },
+        { label: 'Molto attiva', value: 'attivo' },
+      ]},
+    ]},
+    { title: "Come ti definiresti in palestra?", fields: [
+      { type: 'chip', name: 'livello_allenamento', required: true, options: [
+        { label: 'Alle prime armi', value: 'base' },
+        { label: 'Ho già esperienza', value: 'intermedia' },
+        { label: 'Molto esperta', value: 'avanzata' },
+      ]},
+    ]},
+    { title: "Qual è il tuo obiettivo principale?", fields: [
+      { type: 'chip', name: 'obiettivo_attuale', required: true, options: [
+        { label: 'Dimagrimento', value: 'dimagrimento' },
+        { label: 'Aumento massa muscolare', value: 'aumento_massa' },
+        { label: 'Ricomposizione corporea', value: 'ricomposizione' },
+        { label: 'Programmazione', value: 'programmazione' },
+        { label: 'Forza', value: 'forza' },
+      ]},
+    ]},
+    { title: "Hai patologie, infortuni o zone del corpo che ti creano fastidio?", subtitle: "Seleziona pure più di una", fields: [
+      { type: 'checklist', name: 'problematiche_salute', required: true, exclusiveValue: 'nessuna', options: [
+        ...CONDIZIONI_SALUTE,
+        { label: 'Altro', value: 'altro' },
+        { label: 'Nessuna', value: 'nessuna' },
+      ]},
+      { type: 'textarea', name: 'problematiche_salute_note', placeholder: "Dimmi di più (dove, da quanto tempo, se hai un referto medico...)", required: true, conditionalOn: { name: 'problematiche_salute', anyExcept: 'nessuna' } },
+    ]},
+    { title: "Un po' di anamnesi", subtitle: "Serve a costruire un programma sicuro per te. Se non hai nulla da segnalare scrivi 'nessuno'", fields: [
+      { type: 'textarea', name: 'interventi_infortuni', label: 'Interventi chirurgici o infortuni passati', placeholder: "es. frattura alla caviglia nel 2022, oppure scrivi 'nessuno'", required: true },
+      { type: 'textarea', name: 'farmaci_allergie', label: 'Farmaci, allergie o intolleranze', placeholder: "es. lattosio, pillola, integratori, oppure scrivi 'nessuno'", required: true },
+      { type: 'chip', name: 'nutrizionista', required: true, options: [
+        { label: 'Sono seguita da un/una nutrizionista', value: 'si' },
+        { label: 'Non sono seguita da nessuno', value: 'no' },
+      ]},
+    ]},
+    { title: "Su cosa vuoi lavorare di più?", subtitle: "Seleziona pure più zone", fields: [
+      { type: 'checklist', name: 'focus_crescita', required: true, options: [
+        { label: 'Glutei', value: 'Glutei' }, { label: 'Quadricipiti', value: 'Quadricipiti' },
+        { label: 'Femorali', value: 'Femorali' }, { label: 'Polpacci', value: 'Polpacci' },
+        { label: 'Schiena', value: 'Schiena' }, { label: 'Petto', value: 'Petto' },
+        { label: 'Spalle', value: 'Spalle' }, { label: 'Bicipiti', value: 'Bicipiti' },
+        { label: 'Tricipiti', value: 'Tricipiti' },
+      ]},
+    ]},
+    { title: "Quanto riesci ad allenarti?", fields: [
+      { type: 'chip', name: 'frequenza', required: true, options: [
+        { label: '2 volte a settimana', value: '2 volte a settimana' },
+        { label: '3 volte a settimana', value: '3 volte a settimana' },
+        { label: '4 volte a settimana', value: '4 volte a settimana' },
+        { label: '5 o più volte a settimana', value: '5 o più volte a settimana' },
+      ]},
+    ]},
+    { title: "Come mi hai conosciuta?", fields: [
+      { type: 'chip', name: 'come_conosciuta', required: true, options: [
+        { label: 'Instagram', value: 'Instagram' },
+        { label: 'Passaparola', value: 'Passaparola' },
+        { label: 'Palestra Bulb', value: 'Palestra Bulb' },
+        { label: 'Altro', value: 'Altro' },
+      ]},
+    ]},
+    { title: "Vuoi dirmi qualcos'altro?", subtitle: "Uno spazio tutto tuo: scrivimi pure extra, dubbi, richieste o quello che vuoi che sappia di te ✨ Facoltativo", fields: [
+      { type: 'textarea', name: 'note', big: true, placeholder: "Scrivi qui quello che vuoi...", required: false },
+    ]},
+    { title: "Ultimo step: i tuoi contatti", subtitle: "Mi servono per ricontattarti", final: true, fields: [
+      { type: 'text', name: 'nome', label: 'Nome', required: true },
+      { type: 'text', name: 'cognome', label: 'Cognome', required: true },
+      { type: 'email', name: 'email', label: 'Email', required: true },
+      { type: 'tel', name: 'telefono', label: 'Telefono (WhatsApp)', required: true },
+      { type: 'consent', name: 'consenso', required: true, label: "Acconsento al trattamento dei miei dati personali per essere ricontattata da Morgana." },
+    ]},
+  ];
+
+  let current = 0;
+  let started = !promoAttiva();   // con la promo attiva si parte da una pagina di benvenuto con il banner
+  function startQuiz(){ started = true; render(); }
+  const answers = {};
+
+  function optLabel(f, value){
+    const o = f.options.find((o) => o.value === value);
+    return o ? o.label : value;
+  }
+  function labelDi(name, value){
+    for (const s of steps) for (const f of s.fields) if (f.name === name && f.options) return optLabel(f, value);
+    return value;
+  }
+
+  function isFieldVisible(f){
+    if (!f.conditionalOn) return true;
+    const cond = f.conditionalOn;
+    if (cond.value !== undefined) return answers[cond.name] === cond.value;
+    if (cond.notValue !== undefined) return answers[cond.name] !== undefined && answers[cond.name] !== cond.notValue;
+    if (cond.anyExcept !== undefined) {
+      const v = answers[cond.name] || [];
+      return v.some((x) => x !== cond.anyExcept);
+    }
+    return true;
+  }
+
+  function fieldHTML(f){
+    const shown = isFieldVisible(f);
+    const wrapOpen = f.conditionalOn ? '<div class="conditional' + (shown ? ' show' : '') + '" data-field="' + f.name + '">' : '';
+    const wrapClose = f.conditionalOn ? '</div>' : '';
+
+    let inner = '';
+    if (f.type === 'chip') {
+      inner += '<div class="radio-group">' + f.options.map((o) =>
+        '<label class="radio-chip"><input type="radio" name="' + f.name + '" value="' + o.value + '" ' + (answers[f.name] === o.value ? 'checked' : '') + '><span>' + o.label + '</span></label>'
+      ).join('') + '</div>';
+    } else if (f.type === 'checkbox') {
+      const vals = answers[f.name] || [];
+      inner += '<div class="radio-group">' + f.options.map((o) =>
+        '<label class="check-chip"><input type="checkbox" name="' + f.name + '" value="' + o.value + '" ' + (vals.includes(o.value) ? 'checked' : '') + '><span>' + o.label + '</span></label>'
+      ).join('') + '</div>';
+    } else if (f.type === 'checklist') {
+      const vals = answers[f.name] || [];
+      inner += '<div class="checklist">' + f.options.map((o) =>
+        '<label class="list-check' + (vals.includes(o.value) ? ' checked' : '') + '"><input type="checkbox" name="' + f.name + '" value="' + o.value + '" ' + (vals.includes(o.value) ? 'checked' : '') + '><span>' + o.label + '</span></label>'
+      ).join('') + '</div>';
+    } else if (f.type === 'consent') {
+      const on = answers[f.name] === true;
+      inner += '<div class="consent-box"><label class="list-check' + (on ? ' checked' : '') + '"><input type="checkbox" name="' + f.name + '" value="1" ' + (on ? 'checked' : '') + '><span>' + f.label + '</span></label></div>';
+    } else if (f.type === 'textarea') {
+      inner += (f.label ? '<label>' + f.label + '</label>' : '') + '<textarea' + (f.big ? ' class="grande"' : '') + ' name="' + f.name + '" placeholder="' + (f.placeholder || '') + '">' + (answers[f.name] || '') + '</textarea>';
+    } else {
+      inner += (f.label ? '<label>' + f.label + (f.required === false ? ' <span class="opt">(facoltativo)</span>' : '') + '</label>' : '') +
+        '<input type="' + f.type + '" name="' + f.name + '" placeholder="' + (f.placeholder || '') + '" value="' + (answers[f.name] || '') + '"' +
+        (f.min ? (' min="' + f.min + '"') : '') + (f.max ? (' max="' + f.max + '"') : '') + (f.step ? (' step="' + f.step + '"') : '') + '>';
+    }
+    return wrapOpen + inner + wrapClose;
+  }
+
+  function render(){
+    if (!started) {
+      document.getElementById('promoPill').classList.add('show');
+      document.getElementById('progressFill').parentElement.style.display = 'none';
+      document.getElementById('stepCard').classList.add('intro');
+      document.getElementById('stepCard').innerHTML =
+        '<div class="step-title">Pronta a iniziare?</div>' +
+        '<div class="step-sub">Sono poche domande, ci vogliono circa 5 minuti.</div>' +
+        '<div class="nav-row"><button class="btn-next" onclick="startQuiz()">Inizia ✨</button></div>';
+      return;
+    }
+    document.getElementById('stepCard').classList.remove('intro');
+    document.getElementById('promoPill').classList.remove('show');
+    document.getElementById('progressFill').parentElement.style.display = '';
+    const step = steps[current];
+    const total = steps.length;
+    document.getElementById('progressFill').style.width = Math.round((current / total) * 100) + '%';
+
+    let html = '<div class="step-title">' + step.title + '</div>';
+    if (step.subtitle) html += '<div class="step-sub">' + step.subtitle + '</div>';
+    html += step.fields.map(fieldHTML).join('');
+    html += '<div class="err-text" id="stepErr">Rispondi per continuare.</div>';
+    html += '<div class="nav-row">' +
+      (current > 0 ? '<button class="btn-back" onclick="goBack()">← Indietro</button>' : '') +
+      '<button class="btn-next" onclick="goNext()">' + (step.final ? (promoAttiva() ? "Entra in lista d'attesa ✨" : 'Invia candidatura') : 'Avanti →') + '</button>' +
+      '</div>';
+
+    document.getElementById('stepCard').innerHTML = html;
+    attachListeners();
+  }
+
+  function refreshConditionals(){
+    document.querySelectorAll('.conditional').forEach((box) => {
+      const name = box.dataset.field;
+      const f = steps[current].fields.find((x) => x.name === name);
+      box.classList.toggle('show', isFieldVisible(f));
+    });
+  }
+
+  function attachListeners(){
+    document.querySelectorAll('#stepCard input[type=radio]').forEach((inp) => {
+      inp.addEventListener('change', () => { saveCurrentStep(); refreshConditionals(); });
+    });
+    document.querySelectorAll('#stepCard input[type=checkbox]').forEach((inp) => {
+      inp.addEventListener('change', () => {
+        const e = document.getElementById('stepErr'); if (e) e.style.display = 'none';
+        const field = steps[current].fields.find((f) => f.name === inp.name);
+        if (field && field.exclusiveValue) {
+          const boxes = document.querySelectorAll('#stepCard input[name="' + inp.name + '"]');
+          if (inp.value === field.exclusiveValue && inp.checked) {
+            boxes.forEach((b) => { if (b !== inp) b.checked = false; });
+          } else if (inp.checked) {
+            boxes.forEach((b) => { if (b.value === field.exclusiveValue) b.checked = false; });
+          }
+        }
+        document.querySelectorAll('#stepCard input[name="' + inp.name + '"]').forEach((b) => {
+          if (b.closest('.list-check')) b.closest('.list-check').classList.toggle('checked', b.checked);
+        });
+        saveCurrentStep();
+        refreshConditionals();
+      });
+    });
+  }
+
+  function saveCurrentStep(){
+    const step = steps[current];
+    step.fields.forEach((f) => {
+      if (f.type === 'consent') {
+        const el = document.querySelector('#stepCard input[name="' + f.name + '"]');
+        answers[f.name] = !!(el && el.checked);
+      } else if (f.type === 'checkbox' || f.type === 'checklist') {
+        const checked = Array.from(document.querySelectorAll('#stepCard input[name="' + f.name + '"]:checked')).map((i) => i.value);
+        answers[f.name] = checked;
+      } else if (f.type === 'chip') {
+        const sel = document.querySelector('#stepCard input[name="' + f.name + '"]:checked');
+        answers[f.name] = sel ? sel.value : '';
+      } else {
+        const el = document.querySelector('#stepCard [name="' + f.name + '"]');
+        if (el) answers[f.name] = el.value;
+      }
+    });
+  }
+
+  // Restituisce null se tutto ok, altrimenti il messaggio da mostrare.
+  function validateCurrentStep(){
+    const step = steps[current];
+    for (const f of step.fields) {
+      if (f.conditionalOn && !isFieldVisible(f)) continue;
+      if (f.required !== true) continue;
+      const v = answers[f.name];
+      if (f.type === 'consent') {
+        if (v !== true) return "Per continuare serve il tuo consenso al trattamento dei dati.";
+      } else if (!v || (Array.isArray(v) && v.length === 0) || (typeof v === 'string' && !v.trim())) {
+        return "Rispondi per continuare.";
+      }
+    }
+    if (step.final) {
+      const mail = (answers.email || '').trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail)) return "Controlla l'indirizzo email.";
+    }
+    return null;
+  }
+
+  function goBack(){
+    saveCurrentStep();
+    current--;
+    if (current > 0 && steps[current].fields.every((f) => f.conditionalOn && !isFieldVisible(f))) {
+      current--;
+    }
+    render();
+  }
+
+  async function goNext(){
+    saveCurrentStep();
+    const errEl = document.getElementById('stepErr');
+    const msg = validateCurrentStep();
+    if (msg) {
+      errEl.textContent = msg;
+      errEl.style.display = 'block';
+      return;
+    }
+    errEl.style.display = 'none';
+
+    const step = steps[current];
+    if (step.final) {
+      await submitAll();
+      return;
+    }
+    current++;
+    if (steps[current].fields.every((f) => f.conditionalOn && !isFieldVisible(f))) {
+      current++;
+    }
+    render();
+  }
+
+  function dataIt(iso){
+    const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || '');
+    return m ? (m[3] + '/' + m[2] + '/' + m[1]) : (iso || '');
+  }
+  function una(s){ return String(s || '').replace(/\s*\n+\s*/g, ' ').trim(); }
+
+  // Tutte le risposte in un unico testo ordinato, una voce per riga (campo "obiettivo" di lista_attesa).
+  function testoRisposte(problematiche){
+    const righe = [];
+    const add = (etichetta, valore) => { if (valore !== undefined && valore !== null && String(valore).trim() !== '') righe.push(etichetta + ': ' + una(valore)); };
+    add('Modalità richiesta', labelDi('tipo_servizio', answers.tipo_servizio));
+    if (answers.tipo_servizio !== 'online') add('Sede', answers.sede_abituale);
+    add('Data di nascita', dataIt(answers.data_nascita));
+    add('Sesso', labelDi('sesso', answers.sesso));
+    if (answers.altezza_cm) add('Altezza', answers.altezza_cm + ' cm');
+    if (answers.peso_kg) add('Peso', answers.peso_kg + ' kg');
+    add('Città', answers.citta);
+    add('Lavoro', answers.tipo_lavoro);
+    add('Livello di attività', labelDi('livello_attivita', answers.livello_attivita));
+    add('Esperienza in palestra', labelDi('livello_allenamento', answers.livello_allenamento));
+    add('Obiettivo principale', labelDi('obiettivo_attuale', answers.obiettivo_attuale));
+    add('Patologie / infortuni / fastidi', problematiche.length ? problematiche.map((v) => labelDi('problematiche_salute', v)).join(', ') : 'Nessuna');
+    add('Dettagli', answers.problematiche_salute_note);
+    add('Interventi / infortuni passati', answers.interventi_infortuni);
+    add('Farmaci / allergie / intolleranze', answers.farmaci_allergie);
+    add('Seguita da nutrizionista', answers.nutrizionista === 'si' ? 'Sì' : (answers.nutrizionista === 'no' ? 'No' : ''));
+    add('Zone da migliorare', (answers.focus_crescita || []).join(', '));
+    add('Allenamenti a settimana', answers.frequenza);
+    add('Come mi ha conosciuta', answers.come_conosciuta);
+    add('Note della cliente', answers.note);
+    return righe.join('\n');
+  }
+
+  // Per le candidature normali: i dati senza colonna dedicata vanno in testa alle note.
+  function noteCandidatura(){
+    const r = [];
+    const add = (e, v) => { if (v && String(v).trim()) r.push(e + ': ' + una(v)); };
+    if (!['dimagrimento','aumento_massa','ricomposizione','programmazione','forza'].includes(answers.obiettivo_attuale)) add('Obiettivo principale', labelDi('obiettivo_attuale', answers.obiettivo_attuale));
+    add('Interventi / infortuni passati', answers.interventi_infortuni);
+    add('Farmaci / allergie / intolleranze', answers.farmaci_allergie);
+    add('Seguita da nutrizionista', answers.nutrizionista === 'si' ? 'Sì' : (answers.nutrizionista === 'no' ? 'No' : ''));
+    add('Allenamenti a settimana', answers.frequenza);
+    const extra = r.join('\n');
+    const n = (answers.note || '').trim();
+    if (extra && n) return extra + '\n\nNote della cliente: ' + n;
+    return extra || n || null;
+  }
+
+  async function submitAll(){
+    const btn = document.querySelector('#stepCard .btn-next');
+    btn.disabled = true;
+    btn.textContent = 'Invio in corso...';
+    const errEl = document.getElementById('stepErr');
+
+    const problematiche = (answers.problematiche_salute || []).filter((v) => v !== 'nessuna');
+    const promo = promoAttiva();   // data del momento dell'invio
+
+    let tabella, payload;
+    if (promo) {
+      // Fino al 31/12/2026: la candidatura entra direttamente in lista d'attesa (app > "Lista d'attesa")
+      tabella = 'lista_attesa';
+      payload = {
+        nome: ((answers.nome || '').trim() + ' ' + (answers.cognome || '').trim()).trim(),
+        email: (answers.email || '').trim(),
+        whatsapp: (answers.telefono || '').trim() || null,
+        servizio: 'online',
+        obiettivo: testoRisposte(problematiche),
+        consenso: answers.consenso === true,
+        promo_mese_gratis: true,
+      };
+    } else {
+      // Dal 1 gennaio 2027: flusso di candidatura normale
+      tabella = 'candidature';
+      payload = {
+        nome: (answers.nome || '').trim(),
+        cognome: (answers.cognome || '').trim() || null,
+        email: (answers.email || '').trim(),
+        telefono: (answers.telefono || '').trim() || null,
+        data_nascita: answers.data_nascita || null,
+        sesso: answers.sesso || null,
+        altezza_cm: answers.altezza_cm ? Number(answers.altezza_cm) : null,
+        peso_kg: answers.peso_kg ? Number(answers.peso_kg) : null,
+        citta: answers.citta || null,
+        tipo_lavoro: answers.tipo_lavoro || null,
+        livello_attivita: answers.livello_attivita || null,
+        livello_allenamento: answers.livello_allenamento || null,
+        obiettivo_attuale: ['dimagrimento','aumento_massa','ricomposizione','programmazione','forza'].includes(answers.obiettivo_attuale) ? answers.obiettivo_attuale : null,
+        tipo_servizio: answers.tipo_servizio,
+        sede_abituale: answers.tipo_servizio === 'online' ? null : (answers.sede_abituale || null),
+        problematiche_salute: problematiche,
+        problematiche_salute_note: answers.problematiche_salute_note || null,
+        focus_crescita: answers.focus_crescita || [],
+        come_conosciuta: answers.come_conosciuta || null,
+        note: noteCandidatura(),
+      };
+    }
+
+    try {
+      const res = await fetch(SUPABASE_URL + '/rest/v1/' + tabella, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal',
+        },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error('invio non riuscito');
+    } catch (e) {
+      btn.disabled = false;
+      btn.textContent = promoAttiva() ? "Entra in lista d'attesa ✨" : 'Invia candidatura';
+      errEl.textContent = "Qualcosa non ha funzionato, riprova tra un momento.";
+      errEl.style.display = 'block';
+      return;
+    }
+
+    const nome = (answers.nome || '').trim();
+    document.getElementById('successTitle').textContent = nome ? ('Grazie, ' + nome + '!' ) : 'Grazie!';
+    if (promo) {
+      document.getElementById('successMsg').textContent = "Ho ricevuto la tua candidatura e ti ho inserita in lista d'attesa ✨";
+      document.getElementById('successPromoTxt').textContent = TESTO_PROMO;
+      document.getElementById('successPromo').style.display = 'block';
+    } else {
+      document.getElementById('successMsg').textContent =
+        "Ho ricevuto la tua candidatura ✨ La guardo con calma e ti ricontatto a breve per una chiamata conoscitiva e decidere insieme il percorso migliore per te.";
+    }
+
+    document.getElementById('introBlock').style.display = 'none';
+    document.getElementById('progressFill').parentElement.style.display = 'none';
+    document.getElementById('stepCard').style.display = 'none';
+    document.getElementById('successState').classList.add('active');
+  }
+
+  if (promoAttiva()) {
+    document.getElementById('mainTitle').textContent = "Entra nella lista d'attesa";
+    document.title = "Lista d'attesa · Coaching by Morgana";
+  }
+  render();
+</script>
+</body>
+</html>
