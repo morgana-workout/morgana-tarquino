@@ -493,11 +493,7 @@ footer{background:var(--navy2);padding:3rem 6vw 2.4rem;text-align:center;}
       </div>
 
       <div id="priceReveal" style="display:none;">
-        <div class="price-row">
-          <div class="price-box"><div class="price-per">Mensile</div><div class="price-val">100€</div></div>
-          <div class="price-box"><div class="price-per">Trimestrale</div><div class="price-val">240€</div><div class="price-note">80€/mese</div></div>
-          <div class="price-box"><div class="price-per">Semestrale</div><div class="price-val">360€</div><div class="price-note">60€/mese</div></div>
-        </div>
+        <div class="price-row" id="priceRow"></div>
         <p class="install">Trimestrale e Semestrale rateizzabili in 2 tranche · sconto di benvenuto -10€ riservato ai primi nuovi clienti del mese: posti limitati</p>
         <a href="https://wa.me/393278343253?text=Ciao%20Morgana!%20Voglio%20iniziare%20con%20La%20versione%20migliore%20di%20te." class="btn-pkg btn-cream" target="_blank">Inizia il percorso</a>
       </div>
@@ -644,6 +640,16 @@ document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 // (diverso dagli altri due) e sostituisci l'endpoint qui sotto.
 const PREZZI_ENDPOINT = "https://formspree.io/f/moevvjpz";
 
+async function loadPrices(){
+  try{
+    const r=await fetch('/k-7q4mx2vd.json',{cache:'no-store'});
+    if(!r.ok)return false;
+    const d=await r.json();
+    document.getElementById('priceRow').innerHTML=d.map(function(p){return '<div class="price-box"><div class="price-per">'+p.per+'</div><div class="price-val">'+p.val+'</div>'+(p.note?'<div class="price-note">'+p.note+'</div>':'')+'</div>';}).join('');
+    return true;
+  }catch(e){return false;}
+}
+
 async function unlockPrices(){
   const nome = document.getElementById('gpNome').value.trim();
   const email = document.getElementById('gpEmail').value.trim();
@@ -670,6 +676,7 @@ async function unlockPrices(){
     // anche in caso di errore di rete, mostriamo comunque i prezzi
   }
 
+  await loadPrices();
   document.getElementById('priceGate').style.display = 'none';
   document.getElementById('priceReveal').style.display = 'block';
   document.getElementById('voucherOverlay').classList.add('show');
@@ -724,11 +731,14 @@ function copyVoucherCode(){
 </script>
 <script>
 (function(){try{
-  if(/[?&]prezzi(=1)?(&|$)/.test(location.search)){
-    var g=document.getElementById('priceGate'),r=document.getElementById('priceReveal'),o=document.getElementById('voucherOverlay');
-    if(g)g.style.display='none';
-    if(r)r.style.display='block';
-    if(o)o.classList.remove('show');
+  if(/[?&]k=7q4mx2vd(&|$)/.test(location.search)){
+    loadPrices().then(function(ok){
+      if(!ok)return;
+      var g=document.getElementById('priceGate'),r=document.getElementById('priceReveal'),o=document.getElementById('voucherOverlay');
+      if(g)g.style.display='none';
+      if(r)r.style.display='block';
+      if(o)o.classList.remove('show');
+    });
   }
 }catch(e){}
 })();
